@@ -1,0 +1,117 @@
+{
+  "type": "crud",
+  "name": "products",
+  "title": "상품 관리",
+  "path": "/products",
+  "description": "상품 정보를 추가, 수정, 삭제할 수 있는 화면입니다.",
+  "api": {
+    "baseUrl": "/api/products",
+    "methods": {
+      "get": "GET",
+      "post": "POST",
+      "put": "PUT",
+      "delete": "DELETE"
+    }
+  },
+  "filters": [
+    {
+      "name": "category",
+      "label": "카테고리",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": [
+          "전자",
+          "의류",
+          "식품"
+        ]
+      }
+    },
+    {
+      "name": "brand",
+      "label": "브랜드",
+      "type": "select",
+      "options": {
+        "source": "api",
+        "url": "/api/brands",
+        "labelKey": "name",
+        "valueKey": "id"
+      }
+    },
+    {
+      "name": "name",
+      "label": "상품명",
+      "type": "text"
+    }
+  ],
+  "columns": [
+    {
+      "name": "id",
+      "label": "ID"
+    },
+    {
+      "name": "name",
+      "label": "상품명"
+    },
+    {
+      "name": "price",
+      "label": "가격"
+    },
+    {
+      "name": "category",
+      "label": "카테고리"
+    }
+  ],
+  "form": [
+    {
+      "name": "name",
+      "label": "상품명",
+      "type": "text",
+      "required": true,
+      "validation": {
+        "minLength": 2,
+        "maxLength": 50,
+        "pattern": "^[가-힣a-zA-Z0-9\\s]+$",
+        "message": "상품명은 2~50자, 한글/영문/숫자만 입력하세요."
+      }
+    },
+    {
+      "name": "price",
+      "label": "가격",
+      "type": "number",
+      "validation": {
+        "min": 0,
+        "max": 10000000
+      }
+    },
+    {
+      "name": "category",
+      "label": "카테고리",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": [
+          "전자",
+          "의류",
+          "식품"
+        ]
+      }
+    },
+    {
+      "name": "description",
+      "label": "설명",
+      "type": "textarea"
+    }
+  ],
+  "buttons": {
+    "top": [
+      "add",
+      "delete"
+    ],
+    "bottom": [
+      "save",
+      "cancel"
+    ]
+  },
+  "aiPrompt": "이 화면은 상품을 관리하는 CRUD 대시보드입니다. 필터, 리스트, 폼이 포함됩니다."
+}

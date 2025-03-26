@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# temp
 
-## Getting Started
+1. `root/`: root에는 지금 하는것 처럼 프로젝트 기초가 되는 리소스와, 그리고 전역에서 다뤄지는 리소스, 그리고 도메인에 사용될 업무단위의 비즈니스용 리소스를 구분해서 최소한으로만 구성하는게 내 취향이야. 예를들면:
 
-First, run the development server:
+```tree
+my-dashboard/
+├── node_modules/
+├── public/
+├── src/
+│   └── app/
+│   └── core/
+│   └── features/
+│   └── shared/
+├── .env
+├── .gitignore
+├── next.config.ts
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+├── README.md
+├── package-lock.json
+├── package.json
+└── tsconfig.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+core: 대시보드 기본 구성 리소스
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```tree
+core/
+  config/
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
 
-## Learn More
+shared: 프로젝트별 공통 리소스
 
-To learn more about Next.js, take a look at the following resources:
+```tree
+shared/                     # 비즈니스와 관계된 재사용 될 수 있는 리소스 입니다.
+  apis/
+    rtk-query/
+  constants/                # 정적 원시 값 모음
+  data/                     # 정적 Object(js, json등) 모음
+  ui/
+    atoms/
+    molecules/
+    organisms/
+    templates/
+    pages/
+    components/
+  utils/
+    number/
+    string/
+    navigate/
+    location/
+    date/
+  helfers/                   # 정적인 Object를 반환하는 함수 모음
+  stores/
+    react-context/
+    zustand/
+    redux/
+      features/
+        login/
+          action.ts
+          action-type.ts
+          slice.ts
+          slice-type.ts
+        register/
+      reducers/
+        index.ts
+      index.ts
+  hooks/
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+features: 프로젝트별 각 리소스(shared 하위 모듈들과 동일한 구조사용 가능)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```tree
+features:
+  project1/
+    apis/
+    rtk-query/
+    constants/                # 정적 원시 값 모음
+    data/                     # 정적 Object(js, json등) 모음
+    ui/
+      atoms/
+      molecules/
+      organisms/
+      templates/
+      pages/
+      components/
+    utils/
+      number/
+      string/
+      navigate/
+      location/
+      date/
+    helfers/                   # 정적인 Object를 반환하는 함수 모음
+    stores/
+      react-context/
+      zustand/
+      redux/
+        features/
+          login/
+            action.ts
+            action-type.ts
+            slice.ts
+            slice-type.ts
+          register/
+        reducers/
+          index.ts
+        index.ts
+    hooks/
+  project2/
+    (...)
+```
