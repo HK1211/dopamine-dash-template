@@ -18,4 +18,10 @@ execSync(`node scripts/generate-shadcn-route.js ${metaPath}`, { stdio: "inherit"
 console.log("\n🛠 3단계: columns.ts 별도 생성 중...");
 execSync(`node scripts/generate-shadcn-columns.js ${metaPath}`, { stdio: "inherit" });
 
+console.log("\n🛠 4단계: route.ts 별도 생성 중...");
+execSync(`node scripts/generate-api-routes.js ${metaPath}`, { stdio: "inherit" });
+
+console.log("\n🛠 5단계: react-query hooks 별도 생성 중...");
+execSync(`node scripts/generate-query-hooks.js ${metaPath}`, { stdio: "inherit" });
+
 console.log("\n🎉 모든 shadcn 관련 파일이 성공적으로 생성되었습니다!");
