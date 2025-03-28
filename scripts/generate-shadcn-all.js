@@ -15,4 +15,7 @@ execSync(`node scripts/generate-shadcn.js ${metaPath}`, { stdio: "inherit" });
 console.log("\n🛠 2단계: preview 라우트 페이지 생성 중...");
 execSync(`node scripts/generate-shadcn-route.js ${metaPath}`, { stdio: "inherit" });
 
+console.log("\n🛠 3단계: columns.ts 별도 생성 중...");
+execSync(`node scripts/generate-shadcn-columns.js ${metaPath}`, { stdio: "inherit" });
+
 console.log("\n🎉 모든 shadcn 관련 파일이 성공적으로 생성되었습니다!");

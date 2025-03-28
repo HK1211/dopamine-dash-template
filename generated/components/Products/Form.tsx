@@ -17,7 +17,7 @@ import {
 
 const schema = z.object({
   name: z.string().nonempty().min(2).max(50).regex(/^[가-힣a-zA-Z0-9\s]+$/, "상품명은 2~50자, 한글/영문/숫자만 입력하세요."),
-  price: z.number().nonempty().max(10000000),
+  price: z.number().min(0).max(10000000),
   category: z.string().nonempty(),
   description: z.string().nonempty()
 });

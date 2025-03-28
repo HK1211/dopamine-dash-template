@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-
-const renderShadcnForm = require('../templates/shadcn/Form.tpl.js');
+const renderColumns = require('../templates/shadcn/Columns.tpl.js');
 
 const args = process.argv.slice(2);
 if (args.length === 0) {
@@ -17,14 +16,10 @@ if (!fs.existsSync(metaPath)) {
 
 const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
 const pascalName = meta.name.charAt(0).toUpperCase() + meta.name.slice(1);
-const outputDir = path.join('generated', 'components', pascalName);
+const targetDir = path.join('generated', 'components', pascalName);
+fs.mkdirSync(targetDir, { recursive: true });
 
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, { recursive: true });
-}
+const code = renderColumns(meta, pascalName);
+fs.writeFileSync(path.join(targetDir, 'columns.ts'), code, 'utf-8');
 
-const formCode = renderShadcnForm(meta, pascalName);
-const outPath = path.join(outputDir, 'Form.tsx');
-fs.writeFileSync(outPath, formCode, 'utf-8');
-
-console.log(`✅ shadcn 스타일 Form 컴포넌트가 생성되었습니다: ${outPath}`);
+console.log(`✅ columns.ts 생성 완료 → ${targetDir}/columns.ts`);

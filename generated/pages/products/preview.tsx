@@ -2,22 +2,23 @@
 "use client"
 
 import ProductsForm from "@/generated/components/Products/Form"
-import ProductsDataTable from "@/generated/components/Products/DataTable"
 import ProductsFilterBar from "@/generated/components/Products/FilterBar"
+import { DataTable } from "@/shared/components/ui/DataTable"
+import { columns } from "@/generated/components/Products/columns"
 
 export default function ProductsPreviewPage() {
   const mockData = [
   {
-    id: "ID-001",
-    name: "샘플 상품명",
+    id: "${label.toUpperCase()}-001",
+    name: "샘플 ${label}",
     price: 9900,
-    category: "카테고리 값"
+    category: "${label} 값"
   },
   {
-    id: "ID-001",
-    name: "샘플 상품명",
+    id: "${label.toUpperCase()}-001",
+    name: "샘플 ${label}",
     price: 9900,
-    category: "카테고리 값"
+    category: "${label} 값"
   }
 ];
 
@@ -26,7 +27,7 @@ export default function ProductsPreviewPage() {
       <h1 className="text-2xl font-bold">상품 관리 Preview</h1>
       <ProductsFilterBar onChange={() => {}} />
       <ProductsForm />
-      <ProductsDataTable data={mockData} />
+      <DataTable columns={columns} data={mockData} />
     </div>
   );
 }

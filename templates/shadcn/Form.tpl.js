@@ -1,11 +1,21 @@
 module.exports = function renderShadcnForm(meta, pascalName) {
-  const zodFields = (meta.form || []).map(field => {
+  const fields = meta.form || [];
+
+  const zodFields = fields.map((field) => {
     const name = field.name;
     const v = field.validation || {};
-    const type = field.type === 'number' ? 'z.number()' : 'z.string()';
+    const isNumber = field.type === 'number';
+    const type = isNumber ? 'z.number()' : 'z.string()';
     const rules = [];
 
-    if (v.required !== false) rules.push('.nonempty()');
+    if (v.required !== false) {
+      if (isNumber) {
+        rules.push('.min(0)');
+      } else {
+        rules.push('.nonempty()');
+      }
+    }
+
     if (v.minLength) rules.push(`.min(${v.minLength})`);
     if (v.maxLength) rules.push(`.max(${v.maxLength})`);
     if (v.pattern) rules.push(`.regex(/${v.pattern}/, "${v.message || ''}")`);
@@ -15,7 +25,7 @@ module.exports = function renderShadcnForm(meta, pascalName) {
     return `  ${name}: ${type}${rules.join('')}`;
   }).join(',\n');
 
-  const fields = (meta.form || []).map(field => {
+  const inputs = fields.map((field) => {
     const inputType = field.type === 'number' ? 'number' : 'text';
     return `
       <FormField
@@ -67,7 +77,7 @@ export default function ${pascalName}Form() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        ${fields}
+        ${inputs}
         <Button type="submit">저장</Button>
       </form>
     </Form>

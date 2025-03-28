@@ -1,8 +1,5 @@
 
-"use client"
-
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "@/components/ui/data-table"
 
 export type Products = {
   id: string;
@@ -33,7 +30,3 @@ export const columns: ColumnDef<Products>[] = [
     header: "카테고리"
   }
 ]
-
-export default function ProductsDataTable({ data }: { data: Products[] }) {
-  return <DataTable columns={columns} data={data} />
-}
