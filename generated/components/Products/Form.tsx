@@ -28,7 +28,12 @@ type FormSchema = z.infer<typeof schema>;
 export default function ProductsForm() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
-    defaultValues: {}
+    defaultValues: {
+      name: "",
+      price: 0,
+      category: "",
+      description: ""
+    }
   });
 
   function onSubmit(values: FormSchema) {
