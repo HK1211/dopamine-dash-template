@@ -1,6 +1,7 @@
 
 "use client"
 
+import * as React from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -31,6 +32,8 @@ export default function ProductsForm() {
   function onSubmit(values) {
     console.log(values);
   }
+
+  
 
   return (
     <Form {...form}>
@@ -71,7 +74,11 @@ export default function ProductsForm() {
           <FormItem>
             <FormLabel>카테고리</FormLabel>
             <FormControl>
-              <Input type="text" placeholder="카테고리" {...field} />
+              <select {...field} className="border px-3 py-2 rounded-md">
+        <option value="전자">전자</option>
+        <option value="의류">의류</option>
+        <option value="식품">식품</option>
+              </select>
             </FormControl>
             <FormMessage />
           </FormItem>

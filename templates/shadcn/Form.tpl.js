@@ -26,6 +26,31 @@ module.exports = function renderShadcnForm(meta, pascalName) {
   }).join(',\n');
 
   const inputs = fields.map((field) => {
+    if (field.type === 'select') {
+      const isDynamic = field.options?.source === 'api';
+      const optionsVar = isDynamic ? `${field.name}Options` : null;
+      const optionMap = isDynamic
+        ? `        {${optionsVar}.map(opt => <option key={opt.${field.options?.valueKey}} value={opt.${field.options?.valueKey}}>{opt.${field.options?.labelKey}}</option>)}`
+        : (field.options?.data || []).map(opt => `        <option value="${opt}">${opt}</option>`).join('\n');
+
+      return `
+      <FormField
+        control={form.control}
+        name="${field.name}"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>${field.label}</FormLabel>
+            <FormControl>
+              <select {...field} className="border px-3 py-2 rounded-md">
+${isDynamic ? optionMap : optionMap}
+              </select>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />`;
+    }
+
     const inputType = field.type === 'number' ? 'number' : 'text';
     return `
       <FormField
@@ -43,9 +68,19 @@ module.exports = function renderShadcnForm(meta, pascalName) {
       />`;
   }).join('\n');
 
+  const dynamicFetches = fields.filter(f => f.type === 'select' && f.options?.source === 'api').map(field => {
+    return `const [${field.name}Options, set${field.name.charAt(0).toUpperCase() + field.name.slice(1)}Options] = React.useState([]);
+  React.useEffect(() => {
+    fetch("${field.options.url}")
+      .then(res => res.json())
+      .then(data => set${field.name.charAt(0).toUpperCase() + field.name.slice(1)}Options(data));
+  }, []);`;
+  }).join('\n\n');
+
   return `
 "use client"
 
+import * as React from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -73,6 +108,8 @@ export default function ${pascalName}Form() {
   function onSubmit(values) {
     console.log(values);
   }
+
+  ${dynamicFetches}
 
   return (
     <Form {...form}>

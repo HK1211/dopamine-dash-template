@@ -20,11 +20,7 @@
       "type": "select",
       "options": {
         "source": "static",
-        "data": [
-          "전자",
-          "의류",
-          "식품"
-        ]
+        "data": ["전자", "의류", "식품"]
       }
     },
     {
@@ -90,11 +86,7 @@
       "type": "select",
       "options": {
         "source": "static",
-        "data": [
-          "전자",
-          "의류",
-          "식품"
-        ]
+        "data": ["전자", "의류", "식품"]
       }
     },
     {
@@ -104,14 +96,8 @@
     }
   ],
   "buttons": {
-    "top": [
-      "add",
-      "delete"
-    ],
-    "bottom": [
-      "save",
-      "cancel"
-    ]
+    "top": ["add", "delete"],
+    "bottom": ["save", "cancel"]
   },
   "aiPrompt": "이 화면은 상품을 관리하는 CRUD 대시보드입니다. 필터, 리스트, 폼이 포함됩니다."
 }
