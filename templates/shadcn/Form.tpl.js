@@ -1,5 +1,7 @@
 module.exports = function renderShadcnForm(meta, pascalName) {
   const fields = meta.form || [];
+  const name = meta.name;
+  const title = meta.title || pascalName;
 
   const zodFields = fields.map((field) => {
     const name = field.name;
@@ -105,6 +107,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { toast } from "sonner"
+import { useCreate${pascalName} } from "@/src/features/${name}/apis/useCreate${pascalName}"
 
 const schema = z.object({
 ${zodFields}
@@ -120,8 +124,15 @@ ${defaultValues}
     }
   });
 
+  const mutation = useCreate${pascalName}();
+
   function onSubmit(values: FormSchema) {
-    console.log(values);
+    mutation.mutate(values, {
+      onSuccess: () => {
+        toast.success("${title} 등록 완료");
+        form.reset();
+      }
+    });
   }
 
   ${dynamicFetches}
@@ -130,7 +141,7 @@ ${defaultValues}
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         ${inputs}
-        <Button type="submit">저장</Button>
+        <Button type="submit" disabled={mutation.isPending}>저장</Button>
       </form>
     </Form>
   );

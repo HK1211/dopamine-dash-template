@@ -15,6 +15,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { toast } from "sonner"
+import { useCreateProducts } from "@/src/features/products/apis/useCreateProducts"
 
 const schema = z.object({
   name: z.string().nonempty().min(2).max(50).regex(/^[가-힣a-zA-Z0-9\s]+$/, "상품명은 2~50자, 한글/영문/숫자만 입력하세요."),
@@ -36,8 +38,15 @@ export default function ProductsForm() {
     }
   });
 
+  const mutation = useCreateProducts();
+
   function onSubmit(values: FormSchema) {
-    console.log(values);
+    mutation.mutate(values, {
+      onSuccess: () => {
+        toast.success("상품 관리 등록 완료");
+        form.reset();
+      }
+    });
   }
 
   
@@ -105,7 +114,7 @@ export default function ProductsForm() {
           </FormItem>
         )}
       />
-        <Button type="submit">저장</Button>
+        <Button type="submit" disabled={mutation.isPending}>저장</Button>
       </form>
     </Form>
   );
