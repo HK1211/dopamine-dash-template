@@ -61,7 +61,7 @@ async function main() {
     }
 
     // 결과 저장
-    const outputFile = path.join(rootDir, "ai-prompt.md");
+    const outputFile = path.join(rootDir, "ai-prompt", "ai-prompt.md");
     await writeFile(outputFile, output);
 
     console.log(`분석 완료! ${files.length}개 파일이 ai-prompt.md에 저장되었습니다.`);

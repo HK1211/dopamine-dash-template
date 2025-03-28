@@ -4,29 +4,9 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
   const name = meta.name;
   const storeImport = `use${pascalName}FilterStore`;
 
-  const mockFieldValue = (col, index) => {
-    const name = col.name.toLowerCase();
-    const label = col.label || col.name;
-    if (col.cell?.type === "badge") return "\"active\"";
-    if (col.cell?.type === "buttons" || col.cell?.type === "button") return "\"N/A\"";
-    if (name === "id") return `"\${col.name.toUpperCase()}-00\${index + 1}"`;
-    if (name.includes("name")) return `"\샘플 \${label} \${index + 1}"`;
-    if (name.includes("price") || name.includes("amount")) return String(10000 + index * 1000);
-    if (name.includes("date")) return `"4-01-0\${index + 1}"`;
-    return `"\${label} \${index + 1}"`;
-  };
-
-  const mockItems = [0, 1].map(i => {
-    const row = columns.map(col => `    \${col.name}: \${mockFieldValue(col, i)}`).join(",\n");
-    return `  {\n\${row}\n  }`;
-  }).join(",\n");
-
-  const mockData = `[
-\${mockItems}
-]`;
-
-  const hasActionCell = columns.some(col => col.cell?.type === "buttons" || col.cell?.type === "button");
-  const handlers = hasActionCell ? `
+  const hasActionCell = columns.some((col) => col.cell?.type === "buttons" || col.cell?.type === "button");
+  const handlers = hasActionCell
+    ? `
   function editItem(item: ${pascalName}) {
     console.log("수정:", item);
   }
@@ -34,18 +14,16 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
   function deleteItem(item: ${pascalName}) {
     console.log("삭제:", item);
   }
-` : "";
+`
+    : "";
 
-  const filterHandler = `
-  function handleFilterChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+  const filterHandler = `function handleFilterChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setFilter(name, value);
   }
 `;
 
-  const columnCall = hasActionCell
-    ? "columns(editItem, deleteItem)"
-    : "columns";
+  const columnCall = hasActionCell ? "columns(editItem, deleteItem)" : "columns";
 
   return `
 "use client"
@@ -65,18 +43,16 @@ import { ${storeImport} } from "@/src/features/${name}/stores/filterStore"
 import { useGet${pascalName} } from "@/src/features/${name}/apis/useGet${pascalName}"
 
 export default function ${pascalName}PreviewPage() {
+  const [tab, setTab] = React.useState("list");
   const { filters, setFilter } = ${storeImport}();
   const { data = [], isLoading } = useGet${pascalName}(filters);
-
   ${handlers}
-
   ${filterHandler}
-
   return (
     <LayoutShell>
       <h1 className="text-2xl font-bold mb-4">${title} Preview</h1>
 
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList>
           <TabsTrigger value="list">목록</TabsTrigger>
           <TabsTrigger value="form">등록</TabsTrigger>
@@ -100,7 +76,7 @@ export default function ${pascalName}PreviewPage() {
               <CardTitle>신규 등록</CardTitle>
             </CardHeader>
             <CardContent>
-              <${pascalName}Form />
+              <${pascalName}Form onSuccess={() => setTab("list")} />
             </CardContent>
           </Card>
         </TabsContent>

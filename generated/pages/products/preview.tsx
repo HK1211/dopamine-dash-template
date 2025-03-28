@@ -16,9 +16,9 @@ import { useProductsFilterStore } from "@/src/features/products/stores/filterSto
 import { useGetProducts } from "@/src/features/products/apis/useGetProducts"
 
 export default function ProductsPreviewPage() {
+  const [tab, setTab] = React.useState("list");
   const { filters, setFilter } = useProductsFilterStore();
   const { data = [], isLoading } = useGetProducts(filters);
-
   
   function editItem(item: Products) {
     console.log("수정:", item);
@@ -28,19 +28,16 @@ export default function ProductsPreviewPage() {
     console.log("삭제:", item);
   }
 
-
-  
   function handleFilterChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setFilter(name, value);
   }
 
-
   return (
     <LayoutShell>
       <h1 className="text-2xl font-bold mb-4">상품 관리 Preview</h1>
 
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList>
           <TabsTrigger value="list">목록</TabsTrigger>
           <TabsTrigger value="form">등록</TabsTrigger>
@@ -64,7 +61,7 @@ export default function ProductsPreviewPage() {
               <CardTitle>신규 등록</CardTitle>
             </CardHeader>
             <CardContent>
-              <ProductsForm />
+              <ProductsForm onSuccess={() => setTab("list")} />
             </CardContent>
           </Card>
         </TabsContent>
