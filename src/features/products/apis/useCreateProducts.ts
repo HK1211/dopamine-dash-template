@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export function useCreateProducts() {
   const queryClient = useQueryClient();
@@ -6,12 +6,12 @@ export function useCreateProducts() {
     mutationFn: async (data: any) => {
       const res = await fetch("/api/products", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       });
       return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-    },
+    }
   });
 }

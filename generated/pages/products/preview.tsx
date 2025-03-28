@@ -12,25 +12,12 @@ import { DataTable } from "@/shared/components/ui/DataTable"
 import { columns } from "@/generated/components/Products/columns"
 import type { Products } from "@/generated/components/Products/columns"
 
+import { useProductsFilterStore } from "@/src/features/products/stores/filterStore"
+import { useGetProducts } from "@/src/features/products/apis/useGetProducts"
+
 export default function ProductsPreviewPage() {
-  const mockData = [
-  {
-    id: "ID-001",
-    name: "샘플 상품명 1",
-    price: 10000,
-    category: "카테고리 1",
-    status: "active",
-    actions: "N/A"
-  },
-  {
-    id: "ID-002",
-    name: "샘플 상품명 2",
-    price: 11000,
-    category: "카테고리 2",
-    status: "active",
-    actions: "N/A"
-  }
-];
+  const { filters, setFilter } = useProductsFilterStore();
+  const { data = [], isLoading } = useGetProducts(filters);
 
   
   function editItem(item: Products) {
@@ -39,6 +26,13 @@ export default function ProductsPreviewPage() {
 
   function deleteItem(item: Products) {
     console.log("삭제:", item);
+  }
+
+
+  
+  function handleFilterChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target;
+    setFilter(name, value);
   }
 
 
@@ -55,11 +49,11 @@ export default function ProductsPreviewPage() {
         <TabsContent value="list">
           <Card>
             <CardHeader>
-              <CardTitle>상품 목록</CardTitle>
+              <CardTitle>상품 관리</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ProductsFilterBar onChange={() => {}} />
-              <DataTable<Products> columns={columns(editItem, deleteItem)} data={mockData} />
+              <ProductsFilterBar onChange={handleFilterChange} />
+              <DataTable<Products> columns={columns(editItem, deleteItem)} data={data} />
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 
-export function useGetProducts() {
+export function useGetProducts(filters: Record<string, string>) {
   return useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", filters],
     queryFn: async () => {
-      const res = await fetch("/api/products")
-      return res.json()
+      const query = new URLSearchParams(filters).toString();
+      const res = await fetch(`/api/products?${query}`);
+      return res.json();
     },
   });
 }

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const renderQueryHook = require("../templates/shadcn/useQueryHook.tpl.js");
 
 const args = process.argv.slice(2);
 if (!args.length) {
@@ -27,105 +28,9 @@ const targetDir = path.join("src", "features", name, "apis");
 fs.mkdirSync(targetDir, { recursive: true });
 
 const pascal = name.charAt(0).toUpperCase() + name.slice(1);
-const camel = name.charAt(0).toLowerCase() + name.slice(1);
-
-const files = [];
 
 if (methods.get) {
-  files.push({
-    name: `useGet${pascal}.ts`,
-    code: `
-import { useQuery } from "@tanstack/react-query"
-
-export function useGet${pascal}() {
-  return useQuery({
-    queryKey: ["${name}"],
-    queryFn: async () => {
-      const res = await fetch("${baseUrl}")
-      return res.json()
-    },
-  });
-}
-`,
-  });
-}
-
-if (methods.post) {
-  files.push({
-    name: `useCreate${pascal}.ts`,
-    code: `
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-
-export function useCreate${pascal}() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (data: any) => {
-      const res = await fetch("${baseUrl}", {
-        method: "POST",
-        body: JSON.stringify(data)
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["${name}"] });
-    }
-  });
-}
-`,
-  });
-}
-
-if (methods.put) {
-  files.push({
-    name: `useUpdate${pascal}.ts`,
-    code: `
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-
-export function useUpdate${pascal}() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (data: any) => {
-      const res = await fetch("${baseUrl}", {
-        method: "PUT",
-        body: JSON.stringify(data)
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["${name}"] });
-    }
-  });
-}
-`,
-  });
-}
-
-if (methods.delete) {
-  files.push({
-    name: `useDelete${pascal}.ts`,
-    code: `
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-
-export function useDelete${pascal}() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: string) => {
-      const res = await fetch(\`\${"${baseUrl}"}/\${id}\`, {
-        method: "DELETE"
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["${name}"] });
-    }
-  });
-}
-`,
-  });
-}
-
-for (const file of files) {
-  const filePath = path.join(targetDir, file.name);
-  fs.writeFileSync(filePath, file.code.trim(), "utf-8");
-  console.log(`✅ 생성 완료 → ${filePath}`);
+  const code = renderQueryHook(meta);
+  fs.writeFileSync(path.join(targetDir, `useGet${pascal}.ts`), code, "utf-8");
+  console.log(`✅ useGet${pascal}.ts 생성 완료`);
 }
