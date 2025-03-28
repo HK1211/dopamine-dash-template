@@ -12,13 +12,17 @@ export default function ProductsPreviewPage() {
     id: "${label.toUpperCase()}-001",
     name: "샘플 ${label}",
     price: 9900,
-    category: "${label} 값"
+    category: "${label} 값",
+    status: "${label} 값",
+    actions: "${label} 값"
   },
   {
     id: "${label.toUpperCase()}-001",
     name: "샘플 ${label}",
     price: 9900,
-    category: "${label} 값"
+    category: "${label} 값",
+    status: "${label} 값",
+    actions: "${label} 값"
   }
 ];
 
