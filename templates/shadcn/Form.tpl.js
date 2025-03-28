@@ -28,7 +28,7 @@ module.exports = function renderShadcnForm(meta, pascalName) {
   const inputs = fields.map((field) => {
     if (field.type === 'select') {
       const isDynamic = field.options?.source === 'api';
-      const optionsVar = isDynamic ? `${field.name}Options` : null;
+      const optionsVar = field.name + "Options";
       const optionMap = isDynamic
         ? `        {${optionsVar}.map(opt => <option key={opt.${field.options?.valueKey}} value={opt.${field.options?.valueKey}}>{opt.${field.options?.labelKey}}</option>)}`
         : (field.options?.data || []).map(opt => `        <option value="${opt}">${opt}</option>`).join('\n');
@@ -42,7 +42,7 @@ module.exports = function renderShadcnForm(meta, pascalName) {
             <FormLabel>${field.label}</FormLabel>
             <FormControl>
               <select {...field} className="border px-3 py-2 rounded-md">
-${isDynamic ? optionMap : optionMap}
+${optionMap}
               </select>
             </FormControl>
             <FormMessage />
@@ -68,14 +68,18 @@ ${isDynamic ? optionMap : optionMap}
       />`;
   }).join('\n');
 
-  const dynamicFetches = fields.filter(f => f.type === 'select' && f.options?.source === 'api').map(field => {
-    return `const [${field.name}Options, set${field.name.charAt(0).toUpperCase() + field.name.slice(1)}Options] = React.useState([]);
+  const dynamicFetches = fields
+    .filter(f => f.type === 'select' && f.options?.source === 'api')
+    .map(f => {
+      const varName = f.name + "Options";
+      const setFn = "set" + f.name.charAt(0).toUpperCase() + f.name.slice(1) + "Options";
+      return `const [${varName}, ${setFn}] = React.useState([]);
   React.useEffect(() => {
-    fetch("${field.options.url}")
+    fetch("${f.options.url}")
       .then(res => res.json())
-      .then(data => set${field.name.charAt(0).toUpperCase() + field.name.slice(1)}Options(data));
+      .then(data => ${setFn}(data));
   }, []);`;
-  }).join('\n\n');
+    }).join('\n\n');
 
   return `
 "use client"
@@ -99,13 +103,15 @@ const schema = z.object({
 ${zodFields}
 });
 
+type FormSchema = z.infer<typeof schema>;
+
 export default function ${pascalName}Form() {
-  const form = useForm({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
     defaultValues: {}
   });
 
-  function onSubmit(values) {
+  function onSubmit(values: FormSchema) {
     console.log(values);
   }
 

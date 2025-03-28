@@ -9,20 +9,20 @@ import { columns } from "@/generated/components/Products/columns"
 export default function ProductsPreviewPage() {
   const mockData = [
   {
-    id: "${label.toUpperCase()}-001",
-    name: "샘플 ${label}",
+    id: "ID-001",
+    name: "샘플 상품명",
     price: 9900,
-    category: "${label} 값",
-    status: "${label} 값",
-    actions: "${label} 값"
+    category: "카테고리 값",
+    status: "상태 값",
+    actions: "관리 값"
   },
   {
-    id: "${label.toUpperCase()}-001",
-    name: "샘플 ${label}",
+    id: "ID-001",
+    name: "샘플 상품명",
     price: 9900,
-    category: "${label} 값",
-    status: "${label} 값",
-    actions: "${label} 값"
+    category: "카테고리 값",
+    status: "상태 값",
+    actions: "관리 값"
   }
 ];
 

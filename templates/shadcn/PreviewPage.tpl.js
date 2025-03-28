@@ -5,12 +5,12 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
 
   const mockFieldValue = (col) => {
     const name = col.name.toLowerCase();
-    const label = col.label || name;
-    if (name.includes("id")) return `"\${label.toUpperCase()}-001"`;
-    if (name.includes("name")) return `"샘플 \${label}"`;
+    const label = col.label || col.name;
+    if (name.includes("id")) return `"${col.name.toUpperCase()}-001"`;
+    if (name.includes("name")) return `"샘플 ${label}"`;
     if (name.includes("price") || name.includes("amount")) return "9900";
     if (name.includes("date")) return `"2024-01-01"`;
-    return `"\${label} 값"`;
+    return `"${label} 값"`;
   };
 
   const mockItem = columns.map((col) => `    ${col.name}: ${mockFieldValue(col)}`).join(",\n");

@@ -23,13 +23,15 @@ const schema = z.object({
   description: z.string().nonempty()
 });
 
+type FormSchema = z.infer<typeof schema>;
+
 export default function ProductsForm() {
-  const form = useForm({
+  const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
     defaultValues: {}
   });
 
-  function onSubmit(values) {
+  function onSubmit(values: FormSchema) {
     console.log(values);
   }
 
