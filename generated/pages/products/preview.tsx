@@ -1,6 +1,11 @@
 
 "use client"
 
+import * as React from "react"
+import LayoutShell from "@/shared/components/layout/LayoutShell"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import ProductsForm from "@/generated/components/Products/Form"
 import ProductsFilterBar from "@/generated/components/Products/FilterBar"
 import { DataTable } from "@/shared/components/ui/DataTable"
@@ -27,11 +32,38 @@ export default function ProductsPreviewPage() {
 ];
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">상품 관리 Preview</h1>
-      <ProductsFilterBar onChange={() => {}} />
-      <ProductsForm />
-      <DataTable columns={columns} data={mockData} />
-    </div>
+    <LayoutShell>
+      <h1 className="text-2xl font-bold mb-4">상품 관리 Preview</h1>
+
+      <Tabs defaultValue="list" className="w-full">
+        <TabsList>
+          <TabsTrigger value="list">목록</TabsTrigger>
+          <TabsTrigger value="form">등록</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="list">
+          <Card>
+            <CardHeader>
+              <CardTitle>상품 목록</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ProductsFilterBar onChange={() => {}} />
+              <DataTable columns={columns} data={mockData} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="form">
+          <Card>
+            <CardHeader>
+              <CardTitle>신규 등록</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProductsForm />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </LayoutShell>
   );
 }
