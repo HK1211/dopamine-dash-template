@@ -5,13 +5,16 @@ import { cn } from "@/lib/utils"
 export type Products = {
   id: string;
   name: string;
-  price: string;
+  price: number;
   category: string;
   status: string;
   actions: string;
 }
 
-export const columns: ColumnDef<Products>[] = [
+export const columns = (
+  editItem: (row: Products) => void,
+  deleteItem: (row: Products) => void
+): ColumnDef<Products>[] => [
 
   {
     accessorKey: "id",
@@ -52,7 +55,26 @@ export const columns: ColumnDef<Products>[] = [
   },
 
   {
-    accessorKey: "actions",
-    header: "관리"
+    id: "actions",
+    header: "관리",
+    cell: ({ row }) => {
+      return (
+        <div className="flex gap-2">
+          
+          <button
+            onClick={() => editItem(row.original)}
+            className="text-white text-xs rounded px-2 py-1 bg-primary"
+          >
+            수정
+          </button>
+          <button
+            onClick={() => deleteItem(row.original)}
+            className="text-white text-xs rounded px-2 py-1 bg-red-500"
+          >
+            삭제
+          </button>
+        </div>
+      );
+    }
   }
 ]

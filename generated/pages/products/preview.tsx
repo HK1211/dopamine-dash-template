@@ -1,35 +1,43 @@
+"use client";
 
-"use client"
+import * as React from "react";
+import LayoutShell from "@/shared/components/layout/LayoutShell";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import * as React from "react"
-import LayoutShell from "@/shared/components/layout/LayoutShell"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
-import ProductsForm from "@/generated/components/Products/Form"
-import ProductsFilterBar from "@/generated/components/Products/FilterBar"
-import { DataTable } from "@/shared/components/ui/DataTable"
-import { columns } from "@/generated/components/Products/columns"
+import ProductsForm from "@/generated/components/Products/Form";
+import ProductsFilterBar from "@/generated/components/Products/FilterBar";
+import { DataTable } from "@/shared/components/ui/DataTable";
+import { columns } from "@/generated/components/Products/columns";
+import type { Products } from "@/generated/components/Products/columns";
 
 export default function ProductsPreviewPage() {
   const mockData = [
-  {
-    id: "ID-001",
-    name: "샘플 상품명",
-    price: 9900,
-    category: "카테고리 값",
-    status: "상태 값",
-    actions: "관리 값"
-  },
-  {
-    id: "ID-001",
-    name: "샘플 상품명",
-    price: 9900,
-    category: "카테고리 값",
-    status: "상태 값",
-    actions: "관리 값"
+    {
+      id: "ID-001",
+      name: "샘플 상품명 1",
+      price: 10000,
+      category: "카테고리 1",
+      status: "active",
+      actions: "N/A",
+    },
+    {
+      id: "ID-002",
+      name: "샘플 상품명 2",
+      price: 11000,
+      category: "카테고리 2",
+      status: "active",
+      actions: "N/A",
+    },
+  ];
+
+  function editItem(item: Products) {
+    console.log("수정:", item);
   }
-];
+
+  function deleteItem(item: Products) {
+    console.log("삭제:", item);
+  }
 
   return (
     <LayoutShell>
@@ -48,7 +56,7 @@ export default function ProductsPreviewPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <ProductsFilterBar onChange={() => {}} />
-              <DataTable columns={columns} data={mockData} />
+              <DataTable<Products> columns={columns(editItem, deleteItem)} data={mockData} />
             </CardContent>
           </Card>
         </TabsContent>

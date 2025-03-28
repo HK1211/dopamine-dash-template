@@ -3,25 +3,46 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
   const title = meta.title || pascalName;
   const columns = meta.columns || [];
 
-  const mockFieldValue = (col) => {
+  const mockFieldValue = (col, index) => {
     const name = col.name.toLowerCase();
     const label = col.label || col.name;
-    if (name.includes("id")) return `"${col.name.toUpperCase()}-001"`;
-    if (name.includes("name")) return `"샘플 ${label}"`;
-    if (name.includes("price") || name.includes("amount")) return "9900";
-    if (name.includes("date")) return `"2024-01-01"`;
-    return `"${label} 값"`;
+
+    if (col.cell?.type === "badge") return `"active"`; // 기본값
+    if (col.cell?.type === "buttons" || col.cell?.type === "button") return `"N/A"`; // placeholder
+
+    if (name === "id") return `"${col.name.toUpperCase()}-00${index + 1}"`;
+    if (name.includes("name")) return `"샘플 ${label} ${index + 1}"`;
+    if (name.includes("price") || name.includes("amount")) return String(10000 + index * 1000);
+    if (name.includes("date")) return `"2024-01-0${index + 1}"`;
+
+    return `"${label} ${index + 1}"`;
   };
 
-  const mockItem = columns.map((col) => `    ${col.name}: ${mockFieldValue(col)}`).join(",\n");
+  const mockItems = [0, 1].map(i => {
+    const row = columns.map(col => `    ${col.name}: ${mockFieldValue(col, i)}`).join(",\n");
+    return `  {
+${row}
+  }`;
+  }).join(",\n");
+
   const mockData = `[
-  {
-${mockItem}
-  },
-  {
-${mockItem}
-  }
+${mockItems}
 ]`;
+
+  const hasActionCell = columns.some(col => col.cell?.type === "buttons" || col.cell?.type === "button");
+  const handlers = hasActionCell ? `
+  function editItem(item: ${pascalName}) {
+    console.log("수정:", item);
+  }
+
+  function deleteItem(item: ${pascalName}) {
+    console.log("삭제:", item);
+  }
+` : "";
+
+  const columnCall = hasActionCell
+    ? "columns(editItem, deleteItem)"
+    : "columns";
 
   return `
 "use client"
@@ -35,9 +56,12 @@ import ${pascalName}Form from "@/generated/components/${pascalName}/Form"
 import ${pascalName}FilterBar from "@/generated/components/${pascalName}/FilterBar"
 import { DataTable } from "@/shared/components/ui/DataTable"
 import { columns } from "@/generated/components/${pascalName}/columns"
+import type { ${pascalName} } from "@/generated/components/${pascalName}/columns"
 
 export default function ${pascalName}PreviewPage() {
   const mockData = ${mockData};
+
+  ${handlers}
 
   return (
     <LayoutShell>
@@ -56,7 +80,7 @@ export default function ${pascalName}PreviewPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <${pascalName}FilterBar onChange={() => {}} />
-              <DataTable columns={columns} data={mockData} />
+              <DataTable<${pascalName}> columns={${columnCall}} data={mockData} />
             </CardContent>
           </Card>
         </TabsContent>

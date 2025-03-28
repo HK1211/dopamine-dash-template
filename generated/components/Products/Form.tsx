@@ -29,10 +29,10 @@ export default function ProductsForm() {
   const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      price: 0,
-      category: "",
-      description: ""
+    name: "",
+    price: 0,
+    category: "",
+    description: ""
     }
   });
 
