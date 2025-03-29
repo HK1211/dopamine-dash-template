@@ -1,0 +1,84 @@
+{
+  "type": "crud",
+  "name": "brands",
+  "title": "브랜드 관리",
+  "path": "/brands",
+  "description": "브랜드 정보를 관리할 수 있는 화면입니다.",
+  "api": {
+    "baseUrl": "/api/brands",
+    "methods": {
+      "get": "GET",
+      "post": "POST",
+      "put": "PUT",
+      "delete": "DELETE"
+    }
+  },
+  "filters": [
+    {
+      "name": "name",
+      "label": "브랜드명",
+      "type": "text"
+    }
+  ],
+  "columns": [
+    {
+      "name": "id",
+      "label": "ID"
+    },
+    {
+      "name": "name",
+      "label": "브랜드명"
+    },
+    {
+      "name": "actions",
+      "label": "관리",
+      "cell": {
+        "type": "buttons",
+        "actions": [
+          {
+            "label": "수정",
+            "onClick": "editItem"
+          },
+          {
+            "label": "삭제",
+            "onClick": "deleteItem",
+            "variant": "destructive"
+          }
+        ]
+      }
+    }
+  ],
+  "form": [
+    {
+      "name": "name",
+      "label": "브랜드명",
+      "type": "text",
+      "required": true
+    }
+  ],
+  "buttons": {
+    "top": ["add", "delete"],
+    "bottom": ["save", "cancel"]
+  },
+  "edit": {
+    "fetchDetail": false
+  },
+  "delete": {
+    "confirm": true,
+    "message": "정말로 삭제하시겠습니까?",
+    "onSuccess": "toast.success('삭제가 완료되었습니다.')"
+  },
+  "mock": {
+    "enabled": true,
+    "rows": 10,
+    "delay": 300,
+    "source": "faker",
+    "settings": {
+      "pagination": {
+        "defaultSize": 10,
+        "maxSize": 20
+      },
+      "seed": 789
+    }
+  }
+}

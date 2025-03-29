@@ -2,33 +2,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import { faker } from '@faker-js/faker/locale/ko';
 import { MockApiHandler } from '../../../lib/mock/api-handler';
 
-export interface Products {
+export interface Users {
   id: string;
   name: string;
-  price: number;
-  category: string;
+  email: string;
+  role: string;
   status: string;
-  description: string;
-  brand: string;
+  password: string;
 }
 
 // 모의 데이터 생성 함수
-function getProducts(count = 10) {
+function getUsers(count = 10) {
   return Array.from({ length: count }, () => ({
     id: faker.string.uuid(),
-    name: faker.commerce.productName(),
-    price: parseInt(faker.commerce.price({ min: 1000, max: 100000 })),
-    category: faker.helpers.arrayElement(["전자","의류","식품","가구","도서"]),
-    status: faker.helpers.arrayElement(["active","inactive","soldout"]),
-    description: faker.lorem.sentence(),
-    brand: faker.lorem.word(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    role: faker.helpers.arrayElement(["admin","user","guest"]),
+    status: faker.helpers.arrayElement(["active","inactive","pending"]),
+    password: faker.lorem.word(),
   }));
 }
 
 // API 핸들러 인스턴스 생성
-const apiHandler = new MockApiHandler<Products>({
-  entityName: 'products',
-  getMockData: getProducts,
+const apiHandler = new MockApiHandler<Users>({
+  entityName: 'users',
+  getMockData: getUsers,
   searchFields: ['id', 'name'], // 검색 가능 필드 (필요에 따라 수정)
 });
 
@@ -41,7 +39,7 @@ export async function GET(req: NextRequest) {
   // 브랜드 목록과 같은 참조 데이터에 유용함
   if (url.searchParams.has('format') || url.searchParams.has('ui')) {
     const count = parseInt(url.searchParams.get('count') || '20');
-    const items = getProducts(count);
+    const items = getUsers(count);
     return NextResponse.json(items);
   }
   

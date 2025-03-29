@@ -3,6 +3,8 @@ module.exports = function renderShadcnFilter(meta, pascalName) {
     .map((field) => {
       const isDynamic = field.options?.source === "api";
       const varName = field.name + "Options";
+      const valueKey = field.options?.valueKey || "id";
+      const labelKey = field.options?.labelKey || "name";
 
       if (field.type === "select") {
         if (isDynamic) {
@@ -11,9 +13,9 @@ module.exports = function renderShadcnFilter(meta, pascalName) {
         <label className="text-sm font-medium">${field.label}</label>
         <select name="${field.name}" onChange={onChange} className="border px-3 py-2 rounded-md">
           <option value="">전체</option>
-          {${varName}.map((opt: { id: string; name: string }) => (
-            <option key={opt.${field.options?.valueKey}} value={opt.${field.options?.valueKey}}>
-              {opt.${field.options?.labelKey}}
+          {${varName}.map((opt) => (
+            <option key={opt["${valueKey}"]} value={opt["${valueKey}"]}>
+              {opt["${labelKey}"]}
             </option>
           ))}
         </select>
@@ -46,12 +48,26 @@ ${staticOptions}
     .map((f) => {
       const varName = f.name + "Options";
       const setFn = "set" + f.name.charAt(0).toUpperCase() + f.name.slice(1) + "Options";
-      return `const [${varName}, ${setFn}] = React.useState([]);
+      const valueKey = f.options?.valueKey || "id";
+      const labelKey = f.options?.labelKey || "name";
+      return `const [${varName}, ${setFn}] = React.useState<Array<Record<string, any>>>([]);
 
   React.useEffect(() => {
-    fetch("${f.options.url}")
+    fetch("${f.options.url}?ui=true")
       .then(res => res.json())
-      .then(data => ${setFn}(data));
+      .then(data => {
+        // 배열인지 확인하고 설정
+        if (Array.isArray(data)) {
+          ${setFn}(data);
+        } else {
+          console.error("데이터가 배열이 아닙니다:", data);
+          ${setFn}([]);
+        }
+      })
+      .catch(err => {
+        console.error("데이터를 불러오는데 실패했습니다:", err);
+        ${setFn}([]);
+      });
   }, []);`;
     })
     .join("\n\n");

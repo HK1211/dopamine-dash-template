@@ -1,0 +1,173 @@
+{
+  "type": "crud",
+  "name": "users",
+  "title": "사용자 관리",
+  "path": "/users",
+  "description": "사용자 정보를 추가, 수정, 삭제할 수 있는 화면입니다.",
+  "api": {
+    "baseUrl": "/api/users",
+    "methods": {
+      "get": "GET",
+      "post": "POST",
+      "put": "PUT",
+      "patch": "PATCH",
+      "delete": "DELETE"
+    }
+  },
+  "filters": [
+    {
+      "name": "role",
+      "label": "역할",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["admin", "user", "guest"]
+      }
+    },
+    {
+      "name": "status",
+      "label": "상태",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["active", "inactive", "pending"]
+      }
+    },
+    {
+      "name": "name",
+      "label": "이름",
+      "type": "text"
+    }
+  ],
+  "columns": [
+    {
+      "name": "id",
+      "label": "ID"
+    },
+    {
+      "name": "name",
+      "label": "이름"
+    },
+    {
+      "name": "email",
+      "label": "이메일"
+    },
+    {
+      "name": "role",
+      "label": "역할"
+    },
+    {
+      "name": "status",
+      "label": "상태",
+      "cell": {
+        "type": "badge",
+        "map": {
+          "active": "green",
+          "inactive": "gray",
+          "pending": "yellow"
+        }
+      }
+    },
+    {
+      "name": "actions",
+      "label": "관리",
+      "cell": {
+        "type": "buttons",
+        "actions": [
+          {
+            "label": "수정",
+            "onClick": "editItem"
+          },
+          {
+            "label": "삭제",
+            "onClick": "deleteItem",
+            "variant": "destructive"
+          }
+        ]
+      }
+    }
+  ],
+  "form": [
+    {
+      "name": "name",
+      "label": "이름",
+      "type": "text",
+      "required": true,
+      "validation": {
+        "minLength": 2,
+        "maxLength": 50,
+        "pattern": "^[가-힣a-zA-Z\\s]+$",
+        "message": "이름은 2~50자, 한글/영문만 입력하세요."
+      }
+    },
+    {
+      "name": "email",
+      "label": "이메일",
+      "type": "email",
+      "required": true,
+      "validation": {
+        "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        "message": "유효한 이메일 주소를 입력하세요."
+      }
+    },
+    {
+      "name": "role",
+      "label": "역할",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["admin", "user", "guest"]
+      }
+    },
+    {
+      "name": "status",
+      "label": "상태",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["active", "inactive", "pending"]
+      }
+    },
+    {
+      "name": "password",
+      "label": "비밀번호",
+      "type": "password",
+      "validation": {
+        "minLength": 8,
+        "message": "비밀번호는 최소 8자 이상이어야 합니다."
+      }
+    }
+  ],
+  "buttons": {
+    "top": ["add", "delete"],
+    "bottom": ["save", "cancel"]
+  },
+  "aiPrompt": "이 화면은 사용자를 관리하는 CRUD 대시보드입니다. 필터, 리스트, 폼이 포함됩니다. 상태 컬럼은 뱃지로, 관리 컬럼은 수정 및 삭제 버튼으로 렌더링됩니다.",
+  "edit": {
+    "fetchDetail": true
+  },
+  "delete": {
+    "confirm": true,
+    "message": "정말로 사용자를 삭제하시겠습니까?",
+    "onSuccess": "toast.success('사용자 삭제가 완료되었습니다.')"
+  },
+  "mock": {
+    "enabled": true,
+    "rows": 15,
+    "delay": 300,
+    "source": "faker",
+    "settings": {
+      "roles": ["admin", "user", "guest"],
+      "statusProbability": {
+        "active": 0.6,
+        "inactive": 0.3,
+        "pending": 0.1
+      },
+      "pagination": {
+        "defaultSize": 10,
+        "maxSize": 50
+      },
+      "seed": 456
+    }
+  }
+}

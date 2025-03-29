@@ -8,12 +8,24 @@ export default function ProductsFilterBar({
 }: {
   onChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
 }) {
-  const [brandOptions, setBrandOptions] = React.useState([]);
+  const [brandOptions, setBrandOptions] = React.useState<Array<Record<string, any>>>([]);
 
   React.useEffect(() => {
-    fetch("/api/brands")
+    fetch("/api/brands?ui=true")
       .then(res => res.json())
-      .then(data => setBrandOptions(data));
+      .then(data => {
+        // 배열인지 확인하고 설정
+        if (Array.isArray(data)) {
+          setBrandOptions(data);
+        } else {
+          console.error("데이터가 배열이 아닙니다:", data);
+          setBrandOptions([]);
+        }
+      })
+      .catch(err => {
+        console.error("데이터를 불러오는데 실패했습니다:", err);
+        setBrandOptions([]);
+      });
   }, []);
 
   return (
@@ -33,9 +45,9 @@ export default function ProductsFilterBar({
         <label className="text-sm font-medium">브랜드</label>
         <select name="brand" onChange={onChange} className="border px-3 py-2 rounded-md">
           <option value="">전체</option>
-          {brandOptions.map((opt: { id: string; name: string }) => (
-            <option key={opt.id} value={opt.id}>
-              {opt.name}
+          {brandOptions.map((opt) => (
+            <option key={opt["id"]} value={opt["id"]}>
+              {opt["name"]}
             </option>
           ))}
         </select>

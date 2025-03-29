@@ -1,0 +1,181 @@
+{
+  "type": "crud",
+  "name": "customers",
+  "title": "고객 관리",
+  "path": "/customers",
+  "description": "고객 정보를 추가, 수정, 삭제할 수 있는 화면입니다.",
+  "api": {
+    "baseUrl": "/api/customers",
+    "methods": {
+      "get": "GET",
+      "post": "POST",
+      "put": "PUT",
+      "delete": "DELETE"
+    }
+  },
+  "filters": [
+    {
+      "name": "customerType",
+      "label": "고객 유형",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["개인", "기업", "공공기관"]
+      }
+    },
+    {
+      "name": "grade",
+      "label": "등급",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["VIP", "Gold", "Silver", "Bronze"]
+      }
+    },
+    {
+      "name": "name",
+      "label": "고객명",
+      "type": "text"
+    }
+  ],
+  "columns": [
+    {
+      "name": "id",
+      "label": "고객 ID"
+    },
+    {
+      "name": "name",
+      "label": "고객명"
+    },
+    {
+      "name": "phone",
+      "label": "연락처"
+    },
+    {
+      "name": "email",
+      "label": "이메일"
+    },
+    {
+      "name": "customerType",
+      "label": "고객 유형"
+    },
+    {
+      "name": "grade",
+      "label": "등급",
+      "cell": {
+        "type": "badge",
+        "map": {
+          "VIP": "purple",
+          "Gold": "amber",
+          "Silver": "gray",
+          "Bronze": "brown"
+        }
+      }
+    },
+    {
+      "name": "actions",
+      "label": "관리",
+      "cell": {
+        "type": "buttons",
+        "actions": [
+          {
+            "label": "상세",
+            "onClick": "viewItem"
+          },
+          {
+            "label": "수정",
+            "onClick": "editItem"
+          },
+          {
+            "label": "삭제",
+            "onClick": "deleteItem",
+            "variant": "destructive"
+          }
+        ]
+      }
+    }
+  ],
+  "form": [
+    {
+      "name": "name",
+      "label": "고객명",
+      "type": "text",
+      "required": true
+    },
+    {
+      "name": "phone",
+      "label": "연락처",
+      "type": "tel",
+      "validation": {
+        "pattern": "^[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}$",
+        "message": "올바른 전화번호 형식을 입력하세요 (예: 010-1234-5678)"
+      }
+    },
+    {
+      "name": "email",
+      "label": "이메일",
+      "type": "email"
+    },
+    {
+      "name": "customerType",
+      "label": "고객 유형",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["개인", "기업", "공공기관"]
+      }
+    },
+    {
+      "name": "grade",
+      "label": "등급",
+      "type": "select",
+      "options": {
+        "source": "static",
+        "data": ["VIP", "Gold", "Silver", "Bronze"]
+      }
+    },
+    {
+      "name": "address",
+      "label": "주소",
+      "type": "textarea"
+    },
+    {
+      "name": "memo",
+      "label": "메모",
+      "type": "textarea"
+    }
+  ],
+  "buttons": {
+    "top": ["add", "delete"],
+    "bottom": ["save", "cancel"]
+  },
+  "edit": {
+    "fetchDetail": true
+  },
+  "delete": {
+    "confirm": true,
+    "message": "정말로 고객 정보를 삭제하시겠습니까?",
+    "onSuccess": "toast.success('고객 정보가 삭제되었습니다.')"
+  },
+  "mock": {
+    "enabled": true,
+    "rows": 12,
+    "delay": 400,
+    "source": "faker",
+    "settings": {
+      "customerTypes": ["개인", "기업", "공공기관"],
+      "grades": ["VIP", "Gold", "Silver", "Bronze"],
+      "gradeProbability": {
+        "VIP": 0.1,
+        "Gold": 0.2,
+        "Silver": 0.3,
+        "Bronze": 0.4
+      },
+      "pagination": {
+        "defaultSize": 8,
+        "maxSize": 30
+      },
+      "seed": 789
+    }
+  }
+}

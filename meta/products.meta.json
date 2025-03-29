@@ -137,5 +137,28 @@
     "confirm": true,
     "message": "정말로 삭제하시겠습니까?",
     "onSuccess": "toast.success('삭제가 완료되었습니다.')"
+  },
+  "mock": {
+    "enabled": true,
+    "rows": 10,
+    "delay": 500,
+    "source": "faker",
+    "settings": {
+      "categories": ["전자", "의류", "식품", "가구", "도서"],
+      "statusProbability": {
+        "active": 0.7,
+        "inactive": 0.2,
+        "soldout": 0.1
+      },
+      "priceRange": {
+        "min": 1000,
+        "max": 100000
+      },
+      "pagination": {
+        "defaultSize": 5,
+        "maxSize": 20
+      },
+      "seed": 123
+    }
   }
 }
