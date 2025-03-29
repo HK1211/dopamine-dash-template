@@ -3,12 +3,17 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
   const columns = meta.columns || [];
   const name = meta.name;
   const storeImport = `use${pascalName}Store`;
+  const fetchDetail = meta.edit?.fetchDetail;
 
   const hasActionCell = columns.some(col => col.cell?.type === "buttons" || col.cell?.type === "button");
 
   const handlers = hasActionCell ? `
-  function editItem(item: ${pascalName}) {
-    setSelectedItem(item);
+  async function editItem(item: ${pascalName}) {
+    ${fetchDetail
+      ? `const res = await fetch("/api/${name}/" + item.id);
+    const data = await res.json();
+    setSelectedItem(data);`
+      : `setSelectedItem(item);`}
     setDialogOpen(true);
   }
 

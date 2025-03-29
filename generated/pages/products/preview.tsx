@@ -22,7 +22,7 @@ export default function ProductsPreviewPage() {
   const [isDialogOpen, setDialogOpen] = React.useState(false);
 
   
-  function editItem(item: Products) {
+  async function editItem(item: Products) {
     setSelectedItem(item);
     setDialogOpen(true);
   }
