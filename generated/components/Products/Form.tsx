@@ -5,7 +5,6 @@ import * as React from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,7 +15,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { toast } from "sonner"
 import { useCreateProducts } from "@/src/features/products/apis/useCreateProducts"
+import { useUpdateProducts } from "@/src/features/products/apis/useUpdateProducts"
+import { useProductsStore } from "@/src/features/products/stores/store"
 
 const schema = z.object({
   name: z.string().nonempty().min(2).max(50).regex(/^[가-힣a-zA-Z0-9\s]+$/, "상품명은 2~50자, 한글/영문/숫자만 입력하세요."),
@@ -32,9 +34,15 @@ interface Props {
 }
 
 export default function ProductsForm({ onSuccess }: Props) {
+  const {
+    selectedItem,
+    isEditMode,
+    resetSelectedItem
+  } = useProductsStore();
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(schema),
-    defaultValues: {
+    defaultValues: selectedItem ?? {
     name: "",
     price: 0,
     category: "",
@@ -42,13 +50,16 @@ export default function ProductsForm({ onSuccess }: Props) {
     }
   });
 
-  const mutation = useCreateProducts();
+  const create = useCreateProducts();
+  const update = useUpdateProducts();
 
   function handleSubmit(values: FormSchema) {
-    mutation.mutate(values, {
+    const action = isEditMode ? update : create;
+    action.mutate(values, {
       onSuccess: () => {
-        toast.success("상품 관리 등록 완료");
+        toast.success(`${title} ${isEditMode ? "수정" : "등록"} 완료`);
         form.reset();
+        resetSelectedItem();
         onSuccess?.();
       }
     });
@@ -119,7 +130,9 @@ export default function ProductsForm({ onSuccess }: Props) {
           </FormItem>
         )}
       />
-        <Button type="submit" disabled={mutation.isPending}>저장</Button>
+        <Button type="submit" disabled={create.isPending || update.isPending}>
+          {isEditMode ? "수정" : "저장"}
+        </Button>
       </form>
     </Form>
   );

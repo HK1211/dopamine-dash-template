@@ -25,6 +25,6 @@ console.log("\n🛠 5단계: react-query hooks 별도 생성 중...");
 execSync(`node scripts/generate-query-hooks.js ${metaPath}`, { stdio: "inherit" });
 
 console.log("\n🛠 6단계: filterStore.ts 별도 생성 중...");
-execSync(`node scripts/generate-zustand-store.js ${metaPath}`, { stdio: "inherit" });
+execSync(`node scripts/generate-zustand-full-store.js ${metaPath}`, { stdio: "inherit" });
 
 console.log("\n🎉 모든 shadcn 관련 파일이 성공적으로 생성되었습니다!");
