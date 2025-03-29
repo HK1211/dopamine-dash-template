@@ -134,6 +134,8 @@
     "fetchDetail": false
   },
   "delete": {
-    "confirm": true
+    "confirm": true,
+    "message": "정말로 삭제하시겠습니까?",
+    "onSuccess": "toast.success('삭제가 완료되었습니다.')"
   }
 }

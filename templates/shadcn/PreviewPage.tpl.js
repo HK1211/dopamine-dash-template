@@ -4,6 +4,9 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
   const name = meta.name;
   const storeImport = `use${pascalName}Store`;
   const fetchDetail = meta.edit?.fetchDetail;
+  const deleteConfirm = meta.delete?.confirm;
+  const deleteMessage = meta.delete?.message || "정말 삭제하시겠습니까?";
+  const deleteOnSuccess = meta.delete?.onSuccess || "";
 
   const hasActionCell = columns.some(col => col.cell?.type === "buttons" || col.cell?.type === "button");
 
@@ -18,7 +21,12 @@ module.exports = function renderShadcnPreview(meta, pascalName) {
   }
 
   function deleteItem(item: ${pascalName}) {
-    console.log("삭제:", item);
+    ${deleteConfirm ? `if (!confirm("${deleteMessage}")) return;` : ""}
+    deleteMutation.mutate(item.id, {
+      onSuccess: () => {
+        ${deleteOnSuccess}
+      }
+    });
   }
 ` : "";
 
@@ -41,6 +49,7 @@ import LayoutShell from "@/shared/components/layout/LayoutShell"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 import ${pascalName}Form from "@/generated/components/${pascalName}/Form"
 import ${pascalName}FilterBar from "@/generated/components/${pascalName}/FilterBar"
@@ -50,10 +59,12 @@ import type { ${pascalName} } from "@/generated/components/${pascalName}/columns
 
 import { ${storeImport} } from "@/src/features/${name}/stores/store"
 import { useGet${pascalName} } from "@/src/features/${name}/apis/useGet${pascalName}"
+import { useDelete${pascalName} } from "@/src/features/${name}/apis/useDelete${pascalName}"
 
 export default function ${pascalName}PreviewPage() {
   const { filters, setFilter, setSelectedItem, resetSelectedItem } = ${storeImport}();
   const { data = [], isLoading } = useGet${pascalName}(filters);
+  const deleteMutation = useDelete${pascalName}();
   const [isDialogOpen, setDialogOpen] = React.useState(false);
 
   ${handlers}

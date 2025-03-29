@@ -6,6 +6,7 @@ import LayoutShell from "@/shared/components/layout/LayoutShell"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 import ProductsForm from "@/generated/components/Products/Form"
 import ProductsFilterBar from "@/generated/components/Products/FilterBar"
@@ -15,10 +16,12 @@ import type { Products } from "@/generated/components/Products/columns"
 
 import { useProductsStore } from "@/src/features/products/stores/store"
 import { useGetProducts } from "@/src/features/products/apis/useGetProducts"
+import { useDeleteProducts } from "@/src/features/products/apis/useDeleteProducts"
 
 export default function ProductsPreviewPage() {
   const { filters, setFilter, setSelectedItem, resetSelectedItem } = useProductsStore();
   const { data = [], isLoading } = useGetProducts(filters);
+  const deleteMutation = useDeleteProducts();
   const [isDialogOpen, setDialogOpen] = React.useState(false);
 
   
@@ -28,7 +31,12 @@ export default function ProductsPreviewPage() {
   }
 
   function deleteItem(item: Products) {
-    console.log("삭제:", item);
+    if (!confirm("정말로 삭제하시겠습니까?")) return;
+    deleteMutation.mutate(item.id, {
+      onSuccess: () => {
+        toast.success('삭제가 완료되었습니다.')
+      }
+    });
   }
 
   
