@@ -3,46 +3,49 @@ module.exports = function renderShadcnForm(meta, pascalName) {
   const name = meta.name;
   const title = meta.title || pascalName;
 
-  const zodFields = fields.map((field) => {
-    const name = field.name;
-    const v = field.validation || {};
-    const isNumber = field.type === 'number';
-    const type = isNumber ? 'z.number()' : 'z.string()';
-    const rules = [];
+  const zodFields = fields
+    .map((field) => {
+      const name = field.name;
+      const v = field.validation || {};
+      const isNumber = field.type === "number";
+      const type = isNumber ? "z.number()" : "z.string()";
+      const rules = [];
 
-    if (v.required !== false) {
-      if (isNumber) {
-        rules.push('.min(0)');
-      } else {
-        rules.push('.nonempty()');
+      if (v.required !== false) {
+        if (isNumber) {
+          rules.push(".min(0)");
+        } else {
+          rules.push(".nonempty()");
+        }
       }
-    }
 
-    if (v.minLength) rules.push(`.min(${v.minLength})`);
-    if (v.maxLength) rules.push(`.max(${v.maxLength})`);
-    if (v.pattern) rules.push(`.regex(/${v.pattern}/, "${v.message || ''}")`);
-    if (v.min) rules.push(`.min(${v.min})`);
-    if (v.max) rules.push(`.max(${v.max})`);
+      if (v.minLength) rules.push(`.min(${v.minLength})`);
+      if (v.maxLength) rules.push(`.max(${v.maxLength})`);
+      if (v.pattern) rules.push(`.regex(/${v.pattern}/, "${v.message || ""}")`);
+      if (v.min) rules.push(`.min(${v.min})`);
+      if (v.max) rules.push(`.max(${v.max})`);
 
-    return `  ${name}: ${type}${rules.join('')}`;
-  }).join(',\n');
+      return `  ${name}: ${type}${rules.join("")}`;
+    })
+    .join(",\n");
 
-  const defaultValues = fields.map((field) => {
-    const defaultValue =
-      field.type === 'number' ? 0 :
-      '""';
-    return `    ${field.name}: ${defaultValue}`;
-  }).join(',\n');
+  const defaultValues = fields
+    .map((field) => {
+      const defaultValue = field.type === "number" ? 0 : '""';
+      return `    ${field.name}: ${defaultValue}`;
+    })
+    .join(",\n");
 
-  const inputs = fields.map((field) => {
-    if (field.type === 'select') {
-      const isDynamic = field.options?.source === 'api';
-      const optionsVar = field.name + "Options";
-      const optionMap = isDynamic
-        ? `        {${optionsVar}.map(opt => <option key={opt.${field.options?.valueKey}} value={opt.${field.options?.valueKey}}>{opt.${field.options?.labelKey}}</option>)}`
-        : (field.options?.data || []).map(opt => `        <option value="${opt}">${opt}</option>`).join('\n');
+  const inputs = fields
+    .map((field) => {
+      if (field.type === "select") {
+        const isDynamic = field.options?.source === "api";
+        const optionsVar = field.name + "Options";
+        const optionMap = isDynamic
+          ? `        {${optionsVar}.map(opt => <option key={opt.${field.options?.valueKey}} value={opt.${field.options?.valueKey}}>{opt.${field.options?.labelKey}}</option>)}`
+          : (field.options?.data || []).map((opt) => `        <option value="${opt}">${opt}</option>`).join("\n");
 
-      return `
+        return `
       <FormField
         control={form.control}
         name="${field.name}"
@@ -58,10 +61,10 @@ ${optionMap}
           </FormItem>
         )}
       />`;
-    }
+      }
 
-    const inputType = field.type === 'number' ? 'number' : 'text';
-    return `
+      const inputType = field.type === "number" ? "number" : "text";
+      return `
       <FormField
         control={form.control}
         name="${field.name}"
@@ -75,11 +78,12 @@ ${optionMap}
           </FormItem>
         )}
       />`;
-  }).join('\n');
+    })
+    .join("\n");
 
   const dynamicFetches = fields
-    .filter(f => f.type === 'select' && f.options?.source === 'api')
-    .map(f => {
+    .filter((f) => f.type === "select" && f.options?.source === "api")
+    .map((f) => {
       const varName = f.name + "Options";
       const setFn = "set" + f.name.charAt(0).toUpperCase() + f.name.slice(1) + "Options";
       return `const [${varName}, ${setFn}] = React.useState([]);
@@ -88,7 +92,8 @@ ${optionMap}
       .then(res => res.json())
       .then(data => ${setFn}(data));
   }, []);`;
-    }).join('\n\n');
+    })
+    .join("\n\n");
 
   return `
 "use client"
@@ -143,7 +148,7 @@ ${defaultValues}
     const action = isEditMode ? update : create;
     action.mutate(values, {
       onSuccess: () => {
-        toast.success(\`\${title} \${isEditMode ? "수정" : "등록"} 완료\`);
+        toast.success(\`\${values.name} \${isEditMode ? "수정" : "등록"} 완료\`);
         form.reset();
         resetSelectedItem();
         onSuccess?.();

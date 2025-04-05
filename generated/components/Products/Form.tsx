@@ -57,7 +57,7 @@ export default function ProductsForm({ onSuccess }: Props) {
     const action = isEditMode ? update : create;
     action.mutate(values, {
       onSuccess: () => {
-        toast.success(`${title} ${isEditMode ? "수정" : "등록"} 완료`);
+        toast.success(`${values.name} ${isEditMode ? "수정" : "등록"} 완료`);
         form.reset();
         resetSelectedItem();
         onSuccess?.();
