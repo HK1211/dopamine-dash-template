@@ -8,6 +8,16 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const mkdir = promisify(fs.mkdir);
 
+// 프롬프트로 만들 리소스 경로 설정 (여러 경로 지정 가능)
+const PROMPT_RESOURCE_PATHS = [
+  "./meta",
+  "./scripts",
+  "./templates",
+  "./shared",
+  "./components",
+  // 필요한 경로를 여기에 추가하세요
+];
+
 // 제외할 디렉토리 및 파일 패턴
 const excludedDirs = ["node_modules", ".git", "dist", "build"];
 const excludedFilePatterns = [".log", ".lock", ".map"];
@@ -104,19 +114,28 @@ async function splitOutputToFiles(files, outputDir) {
 // 메인 함수
 async function main() {
   try {
-    const rootDir = process.cwd();
-    console.log(`프로젝트 디렉토리: ${rootDir} 분석 중...`);
+    let allFiles = [];
 
-    const files = await getFiles(rootDir);
-    console.log(`총 ${files.length}개 파일을 찾았습니다.`);
+    // 각 경로별로 파일 수집
+    for (const resourcePath of PROMPT_RESOURCE_PATHS) {
+      const rootDir = path.resolve(process.cwd(), resourcePath);
+      console.log(`분석할 디렉토리: ${rootDir}`);
+
+      const files = await getFiles(rootDir);
+      console.log(`${resourcePath}에서 ${files.length}개 파일을 찾았습니다.`);
+
+      allFiles = [...allFiles, ...files];
+    }
+
+    console.log(`총 ${allFiles.length}개 파일을 찾았습니다.`);
 
     // 출력 디렉토리
-    const outputDir = path.join(rootDir, "ai-prompt");
+    const outputDir = path.join(process.cwd(), "ai-prompt");
 
     // 파일을 여러 파트로 나누기
-    const partCount = await splitOutputToFiles(files, outputDir);
+    const partCount = await splitOutputToFiles(allFiles, outputDir);
 
-    console.log(`분석 완료! ${files.length}개 파일이 ${partCount}개의 파트로 나뉘어 저장되었습니다.`);
+    console.log(`분석 완료! ${allFiles.length}개 파일이 ${partCount}개의 파트로 나뉘어 저장되었습니다.`);
     console.log(`각 파트는 ai-prompt 디렉토리의 ai-prompt-part1.md, ai-prompt-part2.md, ... 형식으로 저장되었습니다.`);
   } catch (error) {
     console.error("오류 발생:", error);
