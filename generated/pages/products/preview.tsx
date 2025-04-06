@@ -17,6 +17,7 @@ import type { Products } from "@/generated/components/Products/columns";
 import { useProductsStore } from "@/src/features/products/stores/store";
 import { useGetProducts } from "@/src/features/products/apis/useGetProducts";
 import { useDeleteProducts } from "@/src/features/products/apis/useDeleteProducts";
+import { useLoadingStore } from "@/shared/stores/useLoadingStore";
 import { DataTable } from "@/shared/components/ui/DataTable";
 import { Pagination } from "@/shared/components/ui/Pagination";
 import { SkeletonRow } from "@/shared/components/ui/SkeletonRow";
@@ -31,6 +32,8 @@ export default function ProductsPreviewPage() {
     applyFilters
   } = useProductsStore();
 
+  const { setLoading } = useLoadingStore();
+
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isQueried, setIsQueried] = React.useState(false);
@@ -39,6 +42,10 @@ export default function ProductsPreviewPage() {
   const { data, isLoading } = useGetProducts({ ...queryParams, page }, {
     enabled: isQueried
   });
+
+  React.useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   function handleSearch() {
     applyFilters();
@@ -52,7 +59,10 @@ export default function ProductsPreviewPage() {
 
   function deleteItem(item: Products) {
     if (!confirm("정말로 삭제하시겠습니까?")) return;
+    const { setLoading } = useLoadingStore();
+    setLoading(true);
     useDeleteProducts().mutate(item.id, {
+      onSettled: () => setLoading(false),
       onSuccess: () => {
         toast.success("삭제가 완료되었습니다.");
       }

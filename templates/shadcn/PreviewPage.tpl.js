@@ -21,6 +21,7 @@ import type { ${pascalName} } from "@/generated/components/${pascalName}/columns
 import { use${pascalName}Store } from "@/src/features/${name}/stores/store";
 import { useGet${pascalName} } from "@/src/features/${name}/apis/useGet${pascalName}";
 import { useDelete${pascalName} } from "@/src/features/${name}/apis/useDelete${pascalName}";
+import { useLoadingStore } from "@/shared/stores/useLoadingStore";
 import { DataTable } from "@/shared/components/ui/DataTable";
 import { Pagination } from "@/shared/components/ui/Pagination";
 import { SkeletonRow } from "@/shared/components/ui/SkeletonRow";
@@ -35,6 +36,8 @@ export default function ${pascalName}PreviewPage() {
     applyFilters
   } = use${pascalName}Store();
 
+  const { setLoading } = useLoadingStore();
+
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isQueried, setIsQueried] = React.useState(false);
@@ -43,6 +46,10 @@ export default function ${pascalName}PreviewPage() {
   const { data, isLoading } = useGet${pascalName}({ ...queryParams, page }, {
     enabled: isQueried
   });
+
+  React.useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
 
   function handleSearch() {
     applyFilters();
@@ -56,7 +63,10 @@ export default function ${pascalName}PreviewPage() {
 
   function deleteItem(item: ${pascalName}) {
     if (!confirm("정말로 삭제하시겠습니까?")) return;
+    const { setLoading } = useLoadingStore();
+    setLoading(true);
     useDelete${pascalName}().mutate(item.id, {
+      onSettled: () => setLoading(false),
       onSuccess: () => {
         toast.success("삭제가 완료되었습니다.");
       }

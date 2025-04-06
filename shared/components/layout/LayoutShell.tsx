@@ -4,6 +4,7 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Sidebar from "@/shared/components/layout/Sidebar";
 import { cn } from "@/lib/utils";
+import { GlobalLoadingOverlay } from "@/shared/components/layout/GlobalLoadingOverlay";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setSidebarOpen] = React.useState(true);
@@ -32,7 +33,10 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         </button>
 
         {/* 콘텐츠 */}
-        <main className="flex-1 container mx-auto p-4">{children}</main>
+        <main className="flex-1 container mx-auto p-4">
+          <GlobalLoadingOverlay />
+          {children}
+        </main>
       </div>
 
       <footer className="bg-gray-100 border-t p-4 text-center text-sm text-muted-foreground">
