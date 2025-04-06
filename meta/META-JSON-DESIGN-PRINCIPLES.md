@@ -36,6 +36,10 @@
 - `select`는 `source`가 `api`일 수도 있고, `static`일 수도 있다 → 공통 인터페이스 필요
 - `validation`, `defaultValue`, `readonlyOptions`는 유형별로 의미가 달라진다 → 타입 기반 분기
 - `aiPrompt`는 meta에 의미 부여 → Agent 또는 LLM 활용 기반
+- ✅ **필터 상태와 API 요청 상태를 분리하여 정의해야 한다**
+  - `filters[]`는 UI 입력 상태를 정의
+  - API 호출은 내부적으로 `queryParams`에 복사되어 수행됨 (`applyFilters()` 통해 적용)
+  - 이를 통해 **조회 버튼 기반 UX 구현 가능**
 
 ---
 

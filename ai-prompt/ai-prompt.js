@@ -10,11 +10,18 @@ const mkdir = promisify(fs.mkdir);
 
 // 프롬프트로 만들 리소스 경로 설정 (여러 경로 지정 가능)
 const PROMPT_RESOURCE_PATHS = [
+  "./ai",
+  "./components",
+  "./docs",
+  "./generated",
+  "./lib",
   "./meta",
   "./scripts",
-  "./templates",
   "./shared",
-  "./components",
+  "./src",
+  "./templates",
+  "./todo",
+  "./src",
   // 필요한 경로를 여기에 추가하세요
 ];
 

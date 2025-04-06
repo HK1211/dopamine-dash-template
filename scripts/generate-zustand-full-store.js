@@ -31,15 +31,34 @@ const filterDefaults = filterKeys.map(k => `    ${k}: ""`).join(",\n");
 
 const storeCode = `
 import { create } from "zustand";
-import type { FilterState } from "@/src/shared/types/store";
 import type { ${pascal} } from "@/generated/components/${pascal}/columns";
 
-export const use${pascal}Store = create<FilterState<${pascal}>>((set) => ({
-  filters: {
+type FilterKeys = {
+${filterKeys.map(k => `  ${k}: string;`).join("\n")}
+};
+
+interface ${pascal}Store {
+  filters: FilterKeys;
+  queryParams: FilterKeys;
+  selectedItem: ${pascal} | null;
+  isEditMode: boolean;
+  setFilter: (key: keyof FilterKeys, value: string) => void;
+  applyFilters: () => void;
+  resetFilters: () => void;
+  setSelectedItem: (item: ${pascal}) => void;
+  resetSelectedItem: () => void;
+}
+
+const initialFilters: FilterKeys = {
 ${filterDefaults}
-  },
+};
+
+export const use${pascal}Store = create<${pascal}Store>((set, get) => ({
+  filters: { ...initialFilters },
+  queryParams: { ...initialFilters },
   selectedItem: null,
   isEditMode: false,
+
   setFilter: (key, value) =>
     set((state) => ({
       filters: {
@@ -47,11 +66,24 @@ ${filterDefaults}
         [key]: value
       }
     })),
+
+  applyFilters: () =>
+    set((state) => ({
+      queryParams: { ...state.filters }
+    })),
+
+  resetFilters: () =>
+    set(() => ({
+      filters: { ...initialFilters },
+      queryParams: { ...initialFilters }
+    })),
+
   setSelectedItem: (item) =>
     set(() => ({
       selectedItem: item,
       isEditMode: true
     })),
+
   resetSelectedItem: () =>
     set(() => ({
       selectedItem: null,

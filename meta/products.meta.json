@@ -19,7 +19,11 @@
       "type": "select",
       "options": {
         "source": "static",
-        "data": ["전자", "의류", "식품"]
+        "data": [
+          "전자",
+          "의류",
+          "식품"
+        ]
       }
     },
     {
@@ -115,7 +119,11 @@
       "type": "select",
       "options": {
         "source": "static",
-        "data": ["전자", "의류", "식품"]
+        "data": [
+          "전자",
+          "의류",
+          "식품"
+        ]
       }
     },
     {
@@ -125,8 +133,14 @@
     }
   ],
   "buttons": {
-    "top": ["add", "delete"],
-    "bottom": ["save", "cancel"]
+    "top": [
+      "add",
+      "delete"
+    ],
+    "bottom": [
+      "save",
+      "cancel"
+    ]
   },
   "edit": {
     "fetchDetail": false
@@ -142,7 +156,13 @@
     "delay": 500,
     "source": "faker",
     "settings": {
-      "categories": ["전자", "의류", "식품", "가구", "도서"],
+      "categories": [
+        "전자",
+        "의류",
+        "식품",
+        "가구",
+        "도서"
+      ],
       "statusProbability": {
         "active": 0.7,
         "inactive": 0.2,

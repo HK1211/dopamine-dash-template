@@ -1,46 +1,57 @@
 
 "use client"
 
-import * as React from "react"
-import LayoutShell from "@/shared/components/layout/LayoutShell"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import * as React from "react";
+import LayoutShell from "@/shared/components/layout/LayoutShell";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
-import ProductsForm from "@/generated/components/Products/Form"
-import ProductsFilterBar from "@/generated/components/Products/FilterBar"
-import { columns } from "@/generated/components/Products/columns"
-import type { Products } from "@/generated/components/Products/columns"
+import ProductsForm from "@/generated/components/Products/Form";
+import ProductsFilterBar from "@/generated/components/Products/FilterBar";
+import { columns } from "@/generated/components/Products/columns";
+import type { Products } from "@/generated/components/Products/columns";
 
-import { useProductsStore } from "@/src/features/products/stores/store"
-import { useGetProducts } from "@/src/features/products/apis/useGetProducts"
-import { useDeleteProducts } from "@/src/features/products/apis/useDeleteProducts"
-import { DataTable } from "@/shared/components/ui/DataTable"
+import { useProductsStore } from "@/src/features/products/stores/store";
+import { useGetProducts } from "@/src/features/products/apis/useGetProducts";
+import { useDeleteProducts } from "@/src/features/products/apis/useDeleteProducts";
+import { DataTable } from "@/shared/components/ui/DataTable";
 
 export default function ProductsPreviewPage() {
   const {
-    filters, setFilter,
-    setSelectedItem, resetSelectedItem,
-    selectedItem
+    queryParams,
+    setFilter,
+    setSelectedItem,
+    resetSelectedItem,
+    selectedItem,
+    applyFilters
   } = useProductsStore();
-  const { data = [], isLoading } = useGetProducts(filters);
-  const deleteMutation = useDeleteProducts();
+
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
+  const [isQueried, setIsQueried] = React.useState(false);
 
-  
-  async function editItem(item: Products) {
+  const { data = [], isLoading } = useGetProducts(queryParams, {
+    enabled: isQueried
+  });
+
+  function handleSearch() {
+    applyFilters();
+    setIsQueried(true);
+  }
+
+  function editItem(item: Products) {
     setSelectedItem(item);
     setDialogOpen(true);
   }
 
   function deleteItem(item: Products) {
     if (!confirm("정말로 삭제하시겠습니까?")) return;
-    deleteMutation.mutate(item.id, {
+    useDeleteProducts().mutate(item.id, {
       onSuccess: () => {
-        toast.success('삭제가 완료되었습니다.')
+        toast.success("삭제가 완료되었습니다.");
       }
     });
   }
@@ -50,19 +61,13 @@ export default function ProductsPreviewPage() {
     setDrawerOpen(true);
   }
 
-  
-  function handleFilterChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-    const { name, value } = e.target;
-    setFilter(name, value);
-  }
-
-
   return (
     <LayoutShell>
-      <h1 className="text-2xl font-bold mb-4">상품 관리 관리</h1>
+      <h1 className="text-2xl font-bold mb-4">상품 관리</h1>
 
-      <div className="flex justify-between items-center mb-4">
-        <ProductsFilterBar onChange={handleFilterChange} />
+      <ProductsFilterBar onSearch={handleSearch} />
+
+      <div className="flex justify-end mb-4">
         <Button onClick={() => {
           resetSelectedItem();
           setDialogOpen(true);
