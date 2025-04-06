@@ -22,6 +22,8 @@ import { use${pascalName}Store } from "@/src/features/${name}/stores/store";
 import { useGet${pascalName} } from "@/src/features/${name}/apis/useGet${pascalName}";
 import { useDelete${pascalName} } from "@/src/features/${name}/apis/useDelete${pascalName}";
 import { DataTable } from "@/shared/components/ui/DataTable";
+import { Pagination } from "@/shared/components/ui/Pagination";
+import { SkeletonRow } from "@/shared/components/ui/SkeletonRow";
 
 export default function ${pascalName}PreviewPage() {
   const {
@@ -36,8 +38,9 @@ export default function ${pascalName}PreviewPage() {
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isQueried, setIsQueried] = React.useState(false);
+  const [page, setPage] = React.useState(1);
 
-  const { data, isLoading } = useGet${pascalName}(queryParams, {
+  const { data, isLoading } = useGet${pascalName}({ ...queryParams, page }, {
     enabled: isQueried
   });
 
@@ -85,12 +88,27 @@ export default function ${pascalName}PreviewPage() {
           <CardTitle>${title} 목록</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <DataTable<${pascalName}>
-            columns={columns(editItem, deleteItem)}
-            data={data?.items ?? []}
-            onRowClick={handleRowClick}
-            selectedId={selectedItem?.id}
-          />
+          {isLoading ? (
+            <SkeletonRow />
+          ) : data?.items?.length === 0 ? (
+            <div className="text-sm text-muted-foreground">데이터가 없습니다.</div>
+          ) : (
+            <>
+              <DataTable<${pascalName}>
+                columns={columns(editItem, deleteItem)}
+                data={data?.items ?? []}
+                onRowClick={handleRowClick}
+                selectedId={selectedItem?.id}
+              />
+              {data?.totalPages > 1 && (
+                <Pagination
+                  page={data.page}
+                  totalPages={data.totalPages}
+                  onPageChange={(p) => setPage(p)}
+                />
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
 

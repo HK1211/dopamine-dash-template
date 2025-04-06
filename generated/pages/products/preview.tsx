@@ -18,6 +18,8 @@ import { useProductsStore } from "@/src/features/products/stores/store";
 import { useGetProducts } from "@/src/features/products/apis/useGetProducts";
 import { useDeleteProducts } from "@/src/features/products/apis/useDeleteProducts";
 import { DataTable } from "@/shared/components/ui/DataTable";
+import { Pagination } from "@/shared/components/ui/Pagination";
+import { SkeletonRow } from "@/shared/components/ui/SkeletonRow";
 
 export default function ProductsPreviewPage() {
   const {
@@ -32,8 +34,9 @@ export default function ProductsPreviewPage() {
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isQueried, setIsQueried] = React.useState(false);
+  const [page, setPage] = React.useState(1);
 
-  const { data, isLoading } = useGetProducts(queryParams, {
+  const { data, isLoading } = useGetProducts({ ...queryParams, page }, {
     enabled: isQueried
   });
 
@@ -81,12 +84,27 @@ export default function ProductsPreviewPage() {
           <CardTitle>상품 관리 목록</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <DataTable<Products>
-            columns={columns(editItem, deleteItem)}
-            data={data?.items ?? []}
-            onRowClick={handleRowClick}
-            selectedId={selectedItem?.id}
-          />
+          {isLoading ? (
+            <SkeletonRow />
+          ) : data?.items?.length === 0 ? (
+            <div className="text-sm text-muted-foreground">데이터가 없습니다.</div>
+          ) : (
+            <>
+              <DataTable<Products>
+                columns={columns(editItem, deleteItem)}
+                data={data?.items ?? []}
+                onRowClick={handleRowClick}
+                selectedId={selectedItem?.id}
+              />
+              {data?.totalPages > 1 && (
+                <Pagination
+                  page={data.page}
+                  totalPages={data.totalPages}
+                  onPageChange={(p) => setPage(p)}
+                />
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
 
