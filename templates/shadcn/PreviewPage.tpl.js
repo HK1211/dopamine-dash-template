@@ -37,7 +37,7 @@ export default function ${pascalName}PreviewPage() {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isQueried, setIsQueried] = React.useState(false);
 
-  const { data = [], isLoading } = useGet${pascalName}(queryParams, {
+  const { data, isLoading } = useGet${pascalName}(queryParams, {
     enabled: isQueried
   });
 
@@ -87,7 +87,7 @@ export default function ${pascalName}PreviewPage() {
         <CardContent className="space-y-4">
           <DataTable<${pascalName}>
             columns={columns(editItem, deleteItem)}
-            data={data}
+            data={data?.items ?? []}
             onRowClick={handleRowClick}
             selectedId={selectedItem?.id}
           />

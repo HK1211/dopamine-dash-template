@@ -33,7 +33,7 @@ export default function ProductsPreviewPage() {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [isQueried, setIsQueried] = React.useState(false);
 
-  const { data = [], isLoading } = useGetProducts(queryParams, {
+  const { data, isLoading } = useGetProducts(queryParams, {
     enabled: isQueried
   });
 
@@ -83,7 +83,7 @@ export default function ProductsPreviewPage() {
         <CardContent className="space-y-4">
           <DataTable<Products>
             columns={columns(editItem, deleteItem)}
-            data={data}
+            data={data?.items ?? []}
             onRowClick={handleRowClick}
             selectedId={selectedItem?.id}
           />
