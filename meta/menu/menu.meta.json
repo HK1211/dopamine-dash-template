@@ -1,0 +1,32 @@
+{
+  "menu": [
+    {
+      "label": "상품 관리",
+      "path": "/products",
+      "redirectTo": "/products",
+      "icon": "box",
+      "children": [
+        {
+          "label": "상품 목록",
+          "path": "/products"
+        },
+        {
+          "label": "카테고리 설정",
+          "path": "/products/categories"
+        }
+      ]
+    },
+    {
+      "label": "사용자 관리",
+      "path": "/users",
+      "redirectTo": "/users",
+      "icon": "user",
+      "children": [
+        {
+          "label": "사용자 목록",
+          "path": "/users/list"
+        }
+      ]
+    }
+  ]
+}
