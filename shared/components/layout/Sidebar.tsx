@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import menu from "@/meta/menu/menu.meta.json";
 import { cn } from "@/lib/utils";
-import { LucideIcon, Box, User } from "lucide-react";
+import { LucideIcon, Box, User, ChevronDown, ChevronRight } from "lucide-react";
 
 const iconMap: Record<string, LucideIcon> = {
   box: Box,
@@ -17,10 +17,17 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+type MenuItem = {
+  label: string;
+  path: string;
+  deps?: MenuItem[];
+};
+
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [activeCategory, setActiveCategory] = React.useState<string | null>(null);
+  const [expandedMenus, setExpandedMenus] = React.useState<Record<string, boolean>>({});
 
   React.useEffect(() => {
     const match = menu.menu.find((m) => m.path === pathname && m.redirectTo);
@@ -33,6 +40,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       setActiveCategory(menu.menu[0].path);
     }
   }, [pathname, activeCategory]);
+
+  const toggleMenu = (path: string) => {
+    setExpandedMenus((prev) => ({
+      ...prev,
+      [path]: !prev[path],
+    }));
+  };
+
+  // 현재 경로가 해당 메뉴의 deps에 포함되어 있는지 확인
+  const isMenuOrDepsActive = (menuPath: string, deps?: MenuItem[]) => {
+    if (pathname === menuPath) return true;
+    if (!deps) return false;
+
+    return deps.some((dep) => pathname === dep.path);
+  };
 
   return (
     <>
@@ -75,17 +97,65 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <div className="pl-1 space-y-1">
                     {item.children.map((child) => {
                       const isActive = pathname === child.path;
+                      const hasDeps = child.deps && child.deps.length > 0;
+                      const isExpanded = expandedMenus[child.path];
+                      const isChildActive = isMenuOrDepsActive(child.path, child.deps as MenuItem[]);
+
                       return (
-                        <Link
-                          key={child.path}
-                          href={child.path}
-                          className={cn(
-                            "block text-sm px-2 py-1.5 rounded hover:bg-muted",
-                            isActive && "bg-muted font-bold"
+                        <div key={child.path} className="mb-1">
+                          <div
+                            className={cn(
+                              "flex items-center justify-between text-sm px-2 py-1.5 rounded cursor-pointer",
+                              isChildActive && "bg-muted font-medium text-foreground",
+                              !isChildActive && "hover:bg-muted/60"
+                            )}
+                            onClick={() => {
+                              if (hasDeps) {
+                                toggleMenu(child.path);
+                              } else {
+                                router.push(child.path);
+                              }
+                            }}
+                          >
+                            <span>{child.label}</span>
+                            {hasDeps && (
+                              <button
+                                className="p-0.5 hover:bg-muted rounded-sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleMenu(child.path);
+                                }}
+                              >
+                                {isExpanded ? (
+                                  <ChevronDown className="size-3.5" />
+                                ) : (
+                                  <ChevronRight className="size-3.5" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Deps 메뉴 아이템 */}
+                          {hasDeps && isExpanded && (
+                            <div className="pl-3 mt-1 space-y-1 border-l-2 border-muted ml-2">
+                              {(child.deps as MenuItem[]).map((dep) => {
+                                const isDepActive = pathname === dep.path;
+                                return (
+                                  <Link
+                                    key={dep.path}
+                                    href={dep.path}
+                                    className={cn(
+                                      "block text-sm px-2 py-1 rounded hover:bg-muted",
+                                      isDepActive && "bg-muted/70 font-medium"
+                                    )}
+                                  >
+                                    {dep.label}
+                                  </Link>
+                                );
+                              })}
+                            </div>
                           )}
-                        >
-                          {child.label}
-                        </Link>
+                        </div>
                       );
                     })}
                   </div>

@@ -8,11 +8,27 @@
       "children": [
         {
           "label": "상품 목록",
-          "path": "/products"
+          "path": "/products",
+          "deps": [
+            {
+              "label": "상품 상세",
+              "path": "/products/detail"
+            },
+            {
+              "label": "상품 등록",
+              "path": "/products/add"
+            }
+          ]
         },
         {
           "label": "카테고리 설정",
-          "path": "/products/categories"
+          "path": "/products/categories",
+          "deps": [
+            {
+              "label": "카테고리 추가",
+              "path": "/products/categories/add"
+            }
+          ]
         }
       ]
     },
@@ -24,7 +40,17 @@
       "children": [
         {
           "label": "사용자 목록",
-          "path": "/users/list"
+          "path": "/users/list",
+          "deps": [
+            {
+              "label": "사용자 상세",
+              "path": "/users/list/detail"
+            },
+            {
+              "label": "사용자 추가",
+              "path": "/users/list/add"
+            }
+          ]
         }
       ]
     }
